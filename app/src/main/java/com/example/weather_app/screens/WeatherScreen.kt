@@ -65,13 +65,14 @@ fun WeatherScreen(
     }
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Spacer(Modifier.height(10.dp))
         Row(modifier = Modifier.padding(vertical = 32.dp)) {
             Icon(
                 imageVector = Icons.Default.ChevronLeft,
                 modifier = Modifier
                     .size(30.dp)
                     .clickable {
-                        navController.popBackStack()
+                        navController.navigate("home")
                     },
                 tint = Color.White,
                 contentDescription = null,
@@ -89,12 +90,23 @@ fun WeatherScreen(
         }
         AnimatedVisibility(visible = hourlyForecasts is BaseModel.Success) {
             val data = hourlyForecasts as BaseModel.Success
-            val temp = data.data.first().temperature
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            val temp = data.data.first()
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
-                    text = "${temp.value}°",
+                    text = "${temp.temperature.value}°",
                     fontWeight = FontWeight.Bold,
                     fontSize = 80.sp,
+                    color = Color.White,
+                    fontFamily = russoFont
+                )
+                Text(
+                    text = temp.iconPhrase,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
                     color = Color.White,
                     fontFamily = russoFont
                 )

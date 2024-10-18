@@ -24,6 +24,30 @@ class WeatherViewModel : ViewModel(), KoinComponent {
         MutableStateFlow(BaseModel.Loading)
     val dailyForecast = _dailyForecast.asStateFlow()
 
+    private val _currentLocationDailyForecast: MutableStateFlow<BaseModel<DailyForecasts>> =
+        MutableStateFlow(BaseModel.Loading)
+    val currentLocationDailyForecast = _currentLocationDailyForecast.asStateFlow()
+
+    private val _currentLocationHourlyForecast: MutableStateFlow<BaseModel<List<HourlyForecast>>> =
+        MutableStateFlow(BaseModel.Loading)
+    val currentLocationHourlyForecast = _currentLocationHourlyForecast.asStateFlow()
+
+    fun getCurrentLocationDailyWeather(latitude: Double, longitude: Double) {
+        viewModelScope.launch {
+            repo.getCurrentLocationDailyForecasts(latitude, longitude).also { data ->
+                _currentLocationDailyForecast.update { data }
+            }
+        }
+    }
+
+    fun getCurrentLocationHourlyWeather(latitude: Double, longitude: Double) {
+        viewModelScope.launch {
+            repo.getCurrentLocationHourlyForecasts(latitude, longitude).also { data ->
+                _currentLocationHourlyForecast.update { data }
+            }
+        }
+    }
+
     fun getHourlyForecast(locationKey: String) {
         viewModelScope.launch {
             repo.getHourlyForecasts(locationKey).also { data ->

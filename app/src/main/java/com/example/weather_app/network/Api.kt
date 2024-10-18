@@ -1,5 +1,6 @@
 package com.example.weather_app.network
 
+import com.example.weather_app.modules.CurrentLocation
 import com.example.weather_app.modules.DailyForecasts
 import com.example.weather_app.modules.HourlyForecast
 import com.example.weather_app.modules.Location
@@ -8,7 +9,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-const val APIKEY = "lA0fA1HUqGwQ8mwmkMuPy3LIbL8KMgUr"
+const val APIKEY = "yguF5GG0NpW4DvCB32u4rBZkdGGAnrjF"
 
 interface Api {
     @GET("locations/v1/cities/search")
@@ -31,10 +32,10 @@ interface Api {
         @Query("metric") metric: Boolean = true
     ): Response<List<HourlyForecast>>
 
-//    @GET("locations/v1/cities/geoposition/search")
-//    suspend fun getLocationByCoordinates(
-//        @Query("apikey") apiKey: String,
-//        @Query("q") coordinates: String
-//    ): Response<Geoposition>
+    @GET("locations/v1/cities/geoposition/search")
+    suspend fun getLocationByCoordinates(
+        @Query("apikey") apiKey: String = APIKEY,
+        @Query("q") coordinates: String
+    ): Response<CurrentLocation>
 }
 

@@ -3,9 +3,11 @@ package com.example.weather_app
 import android.app.Application
 import com.example.weather_app.network.Api
 import com.example.weather_app.network.HeaderInterceptor
+import com.example.weather_app.network.LocationService
 import com.example.weather_app.repositories.WeatherRepo
 import com.example.weather_app.repositories.WeatherRepoImpl
 import okhttp3.OkHttpClient
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -16,6 +18,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         startKoin {
+            androidContext(this@App)
             modules(module {
                 single {
                     val client = OkHttpClient.Builder()
@@ -32,10 +35,11 @@ class App : Application() {
                     val retrofit: Retrofit = get()
                     retrofit.create(Api::class.java)
                 }
-                single{
+                single {
                     val api: Api = get()
                     WeatherRepoImpl(api)
                 } bind WeatherRepo::class
+                single { LocationService(androidContext()) }
             })
         }
     }

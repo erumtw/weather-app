@@ -1,6 +1,7 @@
 package com.example.weather_app.repositories
 
 import com.example.weather_app.modules.BaseModel
+import com.example.weather_app.modules.CurrentLocation
 import com.example.weather_app.modules.DailyForecasts
 import com.example.weather_app.modules.HourlyForecast
 import com.example.weather_app.modules.Location
@@ -23,6 +24,48 @@ class WeatherRepoImpl(private val api: Api) : WeatherRepo {
     override suspend fun getHourlyForecasts(locationKey: String): BaseModel<List<HourlyForecast>> {
         return request {
             api.getHourlyForecasts(locationKey = locationKey)
+        }
+    }
+
+    override suspend fun getCurrentLocation(
+        latitude: Double,
+        longitude: Double
+    ): BaseModel<CurrentLocation> {
+        return request {
+            val coordinates = "$latitude,$longitude"
+            api.getLocationByCoordinates(coordinates = coordinates)
+        }
+    }
+
+    override suspend fun getCurrentLocationDailyForecasts(
+        latitude: Double,
+        longitude: Double
+    ): BaseModel<DailyForecasts> {
+        return request {
+            val coordinates = "$latitude,$longitude"
+            val locationResponse = api.getLocationByCoordinates(coordinates = coordinates)
+            if (locationResponse.isSuccessful) {
+                val currentPosition = locationResponse.body()!!
+                api.getDailyForecasts(locationKey = currentPosition.key)
+            } else {
+                throw Exception("Failed to get location")
+            }
+        }
+    }
+
+    override suspend fun getCurrentLocationHourlyForecasts(
+        latitude: Double,
+        longitude: Double
+    ): BaseModel<List<HourlyForecast>> {
+        return request {
+            val coordinates = "$latitude,$longitude"
+            val locationResponse = api.getLocationByCoordinates(coordinates = coordinates)
+            if (locationResponse.isSuccessful) {
+                val currentPosition = locationResponse.body()!!
+                api.getHourlyForecasts(locationKey = currentPosition.key)
+            } else {
+                throw Exception("Failed to get location")
+            }
         }
     }
 }
